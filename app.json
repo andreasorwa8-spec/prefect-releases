@@ -1,24 +1,64 @@
 {
   "expo": {
-    "name": "prefect-mobile",
+    "name": "Prefect",
     "slug": "prefect-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "prefect",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B2A4E"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.prefect.mobile",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Prefect uses Bluetooth to detect your lecturer's beacon and mark your attendance automatically.",
+        "NSBluetoothPeripheralUsageDescription": "Prefect uses Bluetooth to broadcast attendance beacons."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B2A4E"
+      },
+      "package": "com.prefect.mobile",
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_ADVERTISE",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": false,
+          "modes": [
+            "peripheral",
+            "central"
+          ],
+          "bluetoothAlwaysPermission": "Prefect uses Bluetooth to verify your presence in class."
+        }
+      ],
+      "expo-status-bar"
+    ],
+    "extra": {
+      "apiUrl": "http://192.168.88.254:3000",
+      "eas": {
+        "projectId": "82200764-4037-460d-8ce2-7708b0ff962e"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "owner": "reasp"
   }
 }
