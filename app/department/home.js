@@ -1,5 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
+import QrTile from '../../components/QrTile';
+import ChatTile from '../../components/ChatTile';
 
 export default function DepartmentHome() {
   const { session, signOut } = useAuth();
@@ -8,6 +10,10 @@ export default function DepartmentHome() {
       <Text style={styles.label}>DEPARTMENT</Text>
       <Text style={styles.title}>Admin dashboard</Text>
       <Text style={styles.sub}>{session?.user?.email}</Text>
+      <View style={{ height: 16 }} />
+      <QrTile hint="Create, print and scan QR codes" />
+      <ChatTile hint="Message students and lecturers" />
+
       <TouchableOpacity onPress={signOut} style={styles.button}>
         <Text style={styles.buttonText}>Sign out</Text>
       </TouchableOpacity>

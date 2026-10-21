@@ -20,7 +20,9 @@
       "bundleIdentifier": "com.prefect.mobile",
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Prefect uses Bluetooth to detect your lecturer's beacon and mark your attendance automatically.",
-        "NSBluetoothPeripheralUsageDescription": "Prefect uses Bluetooth to broadcast attendance beacons."
+        "NSBluetoothPeripheralUsageDescription": "Prefect uses Bluetooth to broadcast attendance beacons.",
+        "NSCameraUsageDescription": "Prefect uses the camera to scan QR codes for attendance and check-in.",
+        "NSPhotoLibraryUsageDescription": "Prefect saves generated QR codes to your photo library when you export them."
       }
     },
     "android": {
@@ -36,7 +38,9 @@
         "android.permission.BLUETOOTH_ADVERTISE",
         "android.permission.BLUETOOTH_CONNECT",
         "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
       ]
     },
     "plugins": [
@@ -51,7 +55,14 @@
           "bluetoothAlwaysPermission": "Prefect uses Bluetooth to verify your presence in class."
         }
       ],
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-sharing",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Prefect uses the camera to scan QR codes for attendance and check-in."
+        }
+      ]
     ],
     "extra": {
       "apiUrl": "http://192.168.88.254:3000",
