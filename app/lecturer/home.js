@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 
 const ICON_QR = '\u{1F4F1}';
 const ICON_CHAT = '💬';
+const ICON_PARTNER = '\u{1F91D}';
 const ICON_CAL = '\u{1F4C5}';
 const ICON_BALLOT = '\u{1F5F3}\uFE0F';
 const ICON_MEMO = '\u{1F4DD}';
@@ -64,6 +65,7 @@ export default function LecturerHome() {
     { icon: ICON_BALLOT, label: 'Timetable Proposals', hint: 'Vote on changes', route: '/timetable/proposals' },
     { icon: ICON_MEMO, label: 'Assignments', hint: 'Create and grade student work', route: '/lecturer/assignments' },
     { icon: ICON_TUBE, label: 'CATs', hint: 'Create and monitor tests', route: '/lecturer/cats' },
+    { icon: ICON_PARTNER, label: 'Partner Program', hint: 'Earn 10% referring to Prefect', route: '/partner' },
   ];
 
   return (
