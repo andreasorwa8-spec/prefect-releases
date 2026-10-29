@@ -1,0 +1,215 @@
+import { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Ionicons } from '@expo/vector-icons';
+import { api } from '../../lib/api';
+import { enqueueScan, flushQueue, listQueued } from '../../lib/school-scan-queue';
+
+export default function SchoolScanScreen() {
+  const router = useRouter();
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState(null);
+  const [err, setErr] = useState(null);
+  const [todaySlots, setTodaySlots] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => { loadToday(); refreshPendingCount(); }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshPendingCount();
+      flushQueue(api).then((r) => { if (r.flushed > 0) refreshPendingCount(); });
+    }, [])
+  );
+
+  async function loadToday() {
+    try {
+      const data = await api.get('/api/school/timetable/me');
+      const slots = data?.slots || [];
+      const jsDay = new Date().getDay();
+      const ourDay = jsDay === 0 ? 7 : jsDay;
+      setTodaySlots(slots.filter((s) => s.dayOfWeek === ourDay));
+    } catch (_) { setTodaySlots([]); }
+    finally { setLoading(false); }
+  }
+
+  async function refreshPendingCount() {
+    const q = await listQueued();
+    setPendingCount(q.length);
+  }
+
+  function parsePayload(raw) {
+    const parts = String(raw).split(':');
+    if ((parts.length !== 5 && parts.length !== 6) || parts[0] !== 'PREFECT' || parts[1] !== 'SCHOOL' || parts[2] !== '1') return null;
+    return { classId: parts[3], shortCode: parts[4], hmac8: parts[5] || null };
+  }
+
+  async function submitScan(shortCode, hmac8) {
+    if (busy) return;
+    setBusy(true);
+    setErr(null);
+    setResult(null);
+    try {
+      const data = await api.post('/api/school/scan', { shortCode, hmac8 });
+      setResult(data);
+    } catch (e) {
+      // ApiError: .status (0 = network), .data, .message
+      if (e?.status === 0) {
+        const entry = await enqueueScan({ shortCode, hmac8 });
+        if (entry) {
+          setErr('Offline. Scan saved and will sync when you are back online.');
+          await refreshPendingCount();
+        } else {
+          setErr('Offline and could not save scan.');
+        }
+      } else {
+        setErr(e?.data?.error || e?.message || 'Scan failed');
+      }
+    } finally {
+      setBusy(false);
+      setTimeout(() => { setResult(null); setErr(null); }, 4000);
+    }
+  }
+
+  async function startScan() {
+    if (!permission?.granted) {
+      const p = await requestPermission();
+      if (!p.granted) {
+        Alert.alert('Camera permission required', 'Enable camera in settings to scan attendance.');
+        return;
+      }
+    }
+    setScanning(true);
+  }
+  function onBarcodeScanned({ data }) {
+    if (busy) return;
+    const parsed = parsePayload(data);
+    setScanning(false); // always close camera on any scan attempt
+    if (!parsed) {
+      setErr('Not a Prefect class QR code');
+      setTimeout(() => setErr(null), 4000);
+      return;
+    }
+    submitScan(parsed.shortCode, parsed.hmac8);
+  }
+  if (scanning) {
+    return (
+      <View style={styles.scanContainer}>
+        <CameraView
+          style={StyleSheet.absoluteFill}
+          facing="back"
+          barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          onBarcodeScanned={onBarcodeScanned}
+        />
+        <View style={styles.scanOverlay}>
+          <View style={styles.scanBox} />
+          <Text style={styles.scanHint}>Point at the class QR code</Text>
+        </View>
+        <TouchableOpacity onPress={() => setScanning(false)} style={styles.cancelBtn}>
+          <Text style={styles.cancelBtnText}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }}>
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#111827" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Scan attendance</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      {pendingCount > 0 && (
+        <View style={styles.pendingBanner}>
+          <Text style={styles.pendingText}>
+            {pendingCount} scan{pendingCount === 1 ? '' : 's'} pending sync
+          </Text>
+        </View>
+      )}
+
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 24 }} />
+      ) : (
+        <>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Today's schedule</Text>
+            {todaySlots.length === 0 ? (
+              <Text style={styles.muted}>No lessons scheduled today.</Text>
+            ) : (
+              todaySlots.map((s) => (
+                <View key={s.id} style={styles.slotRow}>
+                  <Text style={styles.slotTime}>{s.startTime}-{s.endTime}</Text>
+                  <Text style={styles.slotSubject}>{s.subject?.name}</Text>
+                  <Text style={styles.slotClass}>{s.schoolClass?.name}</Text>
+                </View>
+              ))
+            )}
+          </View>
+
+          <TouchableOpacity style={styles.scanBtn} onPress={startScan} disabled={busy}>
+            <Ionicons name="qr-code-outline" size={20} color="white" />
+            <Text style={styles.scanBtnText}>{busy ? 'Processing...' : 'Start camera'}</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      {result && (
+        <View style={styles.successCard}>
+          <Text style={styles.successTitle}>
+            {result.alreadyScanned ? 'Already marked today' : result.attendance?.status === 'LATE' ? 'Marked LATE' : 'Marked PRESENT'}
+          </Text>
+          <Text style={styles.successBody}>
+            {result.subjectName} - {result.className}
+            {result.attendance?.minutesLate != null ? ' (' + result.attendance.minutesLate + ' min late)' : ''}
+          </Text>
+        </View>
+      )}
+
+      {err && (
+        <View style={styles.errorCard}>
+          <Text style={styles.errorTitle}>{err}</Text>
+          {err === 'NO_SLOT_NOW' && <Text style={styles.errorBody}>No scheduled lesson for this class right now.</Text>}
+          {err === 'HMAC_INVALID' && <Text style={styles.errorBody}>QR verification failed. Ask admin to regenerate.</Text>}
+          {err === 'QR_REVOKED' && <Text style={styles.errorBody}>This QR has been revoked.</Text>}
+          {err === 'QR_NOT_FOUND' && <Text style={styles.errorBody}>This QR is not recognized.</Text>}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  title: { fontSize: 18, fontWeight: '600', color: '#111827' },
+  pendingBanner: { backgroundColor: '#FEF3C7', borderColor: '#F59E0B', borderWidth: 1, borderRadius: 8, padding: 10, marginBottom: 12 },
+  pendingText: { fontSize: 13, color: '#78350F', fontWeight: '500' },
+  section: { backgroundColor: 'white', borderRadius: 10, padding: 14, marginBottom: 16 },
+  sectionTitle: { fontSize: 12, fontWeight: '600', color: '#6B7280', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  muted: { fontSize: 13, color: '#9CA3AF' },
+  slotRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6, borderBottomColor: '#F3F4F6', borderBottomWidth: 1 },
+  slotTime: { fontFamily: 'monospace', fontSize: 12, color: '#6B7280', width: 90 },
+  slotSubject: { fontSize: 13, fontWeight: '500', color: '#111827', flex: 1 },
+  slotClass: { fontSize: 12, color: '#6B7280' },
+  scanBtn: { backgroundColor: '#111827', borderRadius: 10, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  scanBtnText: { color: 'white', fontSize: 15, fontWeight: '600' },
+  scanContainer: { flex: 1, backgroundColor: 'black' },
+  scanOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' },
+  scanBox: { width: 240, height: 240, borderWidth: 3, borderColor: '#22D3EE', borderRadius: 16 },
+  scanHint: { color: 'white', marginTop: 24, fontSize: 14 },
+  cancelBtn: { position: 'absolute', bottom: 40, alignSelf: 'center', backgroundColor: 'white', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
+  cancelBtnText: { fontSize: 15, fontWeight: '600', color: '#DC2626' },
+  successCard: { backgroundColor: '#F0FDF4', borderColor: '#22C55E', borderWidth: 1, borderRadius: 10, padding: 14, marginTop: 16 },
+  successTitle: { fontSize: 16, fontWeight: '700', color: '#14532D' },
+  successBody: { fontSize: 13, color: '#166534', marginTop: 4 },
+  errorCard: { backgroundColor: '#FEF2F2', borderColor: '#EF4444', borderWidth: 1, borderRadius: 10, padding: 14, marginTop: 16 },
+  errorTitle: { fontSize: 15, fontWeight: '600', color: '#7F1D1D' },
+  errorBody: { fontSize: 12, color: '#991B1B', marginTop: 4 },
+});
