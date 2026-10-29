@@ -15,6 +15,8 @@ const ICON_BALLOT = '\u{1F5F3}\uFE0F';
 const ICON_MEMO = '\u{1F4DD}';
 const ICON_TUBE = '\u{1F9EA}';
 const ICON_ARROW = '\u2192';
+const ICON_SCAN = '\u{1F4F7}';
+const ICON_CONSTRUCT = '\u{1F6E0}\uFE0F';
 
 export default function LecturerHome() {
   const { session, signOut } = useAuth();
@@ -65,6 +67,8 @@ export default function LecturerHome() {
     { icon: ICON_BALLOT, label: 'Timetable Proposals', hint: 'Vote on changes', route: '/timetable/proposals' },
     { icon: ICON_MEMO, label: 'Assignments', hint: 'Create and grade student work', route: '/lecturer/assignments' },
     { icon: ICON_TUBE, label: 'CATs', hint: 'Create and monitor tests', route: '/lecturer/cats' },
+    { icon: ICON_SCAN, label: 'School scan', hint: 'Mark class attendance', route: '/school/scan' },
+    { icon: ICON_CONSTRUCT, label: 'Make-up class', hint: 'Request a rescheduled lesson', route: '/lecturer/makeup' },
     { icon: ICON_PARTNER, label: 'Partner Program', hint: 'Earn 10% referring to Prefect', route: '/partner' },
   ];
 
