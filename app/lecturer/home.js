@@ -9,6 +9,7 @@ import { api } from '@/lib/api';
 
 const ICON_QR = '\u{1F4F1}';
 const ICON_CHAT = '💬';
+const ICON_JOB = '💼';
 const ICON_PARTNER = '\u{1F91D}';
 const ICON_CAL = '\u{1F4C5}';
 const ICON_BALLOT = '\u{1F5F3}\uFE0F';
@@ -69,6 +70,7 @@ export default function LecturerHome() {
     { icon: ICON_TUBE, label: 'CATs', hint: 'Create and monitor tests', route: '/lecturer/cats' },
     { icon: ICON_SCAN, label: 'School scan', hint: 'Mark class attendance', route: '/school/scan' },
     { icon: ICON_CONSTRUCT, label: 'Make-up class', hint: 'Request a rescheduled lesson', route: '/lecturer/makeup' },
+    { icon: ICON_JOB, label: 'Jobs', hint: 'Browse open roles and apply in one tap', route: '/jobs' },
     { icon: ICON_PARTNER, label: 'Partner Program', hint: 'Earn 10% referring to Prefect', route: '/partner' },
   ];
 

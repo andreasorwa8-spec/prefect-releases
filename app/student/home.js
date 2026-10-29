@@ -16,6 +16,7 @@ const ICON_CHART = '\u{1F4CA}';
 const ICON_MEGA = '\u{1F4E2}';
 const ICON_BULB = '\u{1F4A1}';
 const ICON_CHAT = '💬';
+const ICON_JOB = '💼';
 const ICON_PARTNER = '\u{1F91D}';
 const ICON_ARROW = '\u2192';
 
@@ -102,6 +103,7 @@ export default function StudentHome() {
     { icon: ICON_CHART, label: 'Your Progress', hint: 'See how you are doing', route: '/student/progress' },
     { icon: ICON_MEGA, label: 'Complaints', hint: 'Raise an issue', route: '/student/complaints' },
     { icon: ICON_BULB, label: 'Suggestions', hint: 'Earn a bounty', route: '/student/suggestions' },
+    { icon: ICON_JOB, label: 'Jobs', hint: 'Browse open roles and apply in one tap', route: '/jobs' },
     { icon: ICON_PARTNER, label: 'Partner Program', hint: 'Earn 10% referring to Prefect', route: '/partner' },
   ];
 
