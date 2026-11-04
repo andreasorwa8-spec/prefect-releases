@@ -103,6 +103,7 @@ export default function StudentHome() {
     { icon: ICON_TUBE, label: 'CATs', hint: 'Take tests', route: '/student/cats' },
     { icon: ICON_CHART, label: 'Your Progress', hint: 'See how you are doing', route: '/student/progress' },
   { icon: ICON_STAR, label: 'My Reviews', hint: 'Reviews you have written', route: '/reviews' },
+  { icon: '\u{1F4BC}', label: 'Career Premium', hint: 'AI career intelligence + PDF reports', route: '/careers/premium' },
     { icon: ICON_MEGA, label: 'Complaints', hint: 'Raise an issue', route: '/student/complaints' },
     { icon: ICON_BULB, label: 'Suggestions', hint: 'Earn a bounty', route: '/student/suggestions' },
     { icon: ICON_JOB, label: 'Jobs', hint: 'Browse open roles and apply in one tap', route: '/jobs' },
