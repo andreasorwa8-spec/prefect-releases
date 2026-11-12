@@ -1,75 +1,51 @@
 {
-  "expo": {
-    "name": "Prefect",
-    "slug": "prefect-mobile",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "scheme": "prefect",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1B2A4E"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.prefect.mobile",
-      "infoPlist": {
-        "NSBluetoothAlwaysUsageDescription": "Prefect uses Bluetooth to detect your lecturer's beacon and mark your attendance automatically.",
-        "NSBluetoothPeripheralUsageDescription": "Prefect uses Bluetooth to broadcast attendance beacons.",
-        "NSCameraUsageDescription": "Prefect uses the camera to scan QR codes for attendance and check-in.",
-        "NSPhotoLibraryUsageDescription": "Prefect saves generated QR codes to your photo library when you export them."
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1B2A4E"
-      },
-      "package": "com.prefect.mobile",
-      "permissions": [
-        "android.permission.BLUETOOTH",
-        "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_SCAN",
-        "android.permission.BLUETOOTH_ADVERTISE",
-        "android.permission.BLUETOOTH_CONNECT",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.CAMERA",
-        "android.permission.READ_MEDIA_IMAGES"
-      ]
-    },
-    "plugins": [
-      [
-        "react-native-ble-plx",
-        {
-          "isBackgroundEnabled": false,
-          "modes": [
-            "peripheral",
-            "central"
-          ],
-          "bluetoothAlwaysPermission": "Prefect uses Bluetooth to verify your presence in class."
-        }
-      ],
-      "expo-status-bar",
-      "expo-sharing",
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Prefect uses the camera to scan QR codes for attendance and check-in."
-        }
-      ]
-    ],
-    "extra": {
-      "apiUrl": "http://192.168.88.254:3000",
-      "eas": {
-        "projectId": "82200764-4037-460d-8ce2-7708b0ff962e"
-      }
-    },
-    "owner": "reasp"
-  }
+    "expo":  {
+                 "name":  "Prefect",
+                 "slug":  "prefect",
+                 "version":  "1.0.0",
+                 "orientation":  "portrait",
+                 "icon":  "./assets/icon.png",
+                 "userInterfaceStyle":  "light",
+                 "splash":  {
+                                "image":  "./assets/splash.png",
+                                "resizeMode":  "contain",
+                                "backgroundColor":  "#FAF7F2"
+                            },
+                 "assetBundlePatterns":  [
+                                             "**/*"
+                                         ],
+                 "plugins":  [
+                                 [
+                                     "expo-location",
+                                     {
+                                         "locationAlwaysAndWhenInUsePermission":  "Prefect uses your location to verify your attendance during scheduled sessions."
+                                     }
+                                 ]
+                             ],
+                 "ios":  {
+                             "supportsTablet":  true,
+                             "bundleIdentifier":  "com.prefect.app",
+                             "infoPlist":  {
+                                               "NSLocationWhenInUseUsageDescription":  "Prefect uses your location to verify your attendance during scheduled sessions."
+                                           }
+                         },
+                 "android":  {
+                                 "adaptiveIcon":  {
+                                                      "foregroundImage":  "./assets/adaptive-icon.png",
+                                                      "backgroundColor":  "#FAF7F2"
+                                                  },
+                                 "package":  "com.prefect.app",
+                                 "permissions":  [
+                                                     "ACCESS_FINE_LOCATION",
+                                                     "ACCESS_COARSE_LOCATION"
+                                                 ]
+                             },
+                 "web":  {
+                             "favicon":  "./assets/icon.png"
+                         },
+                 "extra":  {
+                               "apiUrl":  "https://prefect-jade.vercel.app"
+                           },
+                 "scheme":  "prefect"
+             }
 }

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { api } from '@/lib/api';
+import { registerForPush } from '@/lib/push';
 import { useAuth } from '@/context/AuthContext';
 
 export default function SignIn() {
@@ -58,6 +59,7 @@ export default function SignIn() {
         else if (role === 'ADMIN') router.replace('/admin');
         else if (role === 'OTHER') router.replace('/other/home');
         else router.replace('/student/home');
+        registerForPush().catch(() => {});
       } else {
         setError(data.error || 'Unable to verify');
       }
