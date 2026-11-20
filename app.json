@@ -1,51 +1,58 @@
 {
-    "expo":  {
-                 "name":  "Prefect",
-                 "slug":  "prefect",
-                 "version":  "1.0.0",
-                 "orientation":  "portrait",
-                 "icon":  "./assets/icon.png",
-                 "userInterfaceStyle":  "light",
-                 "splash":  {
-                                "image":  "./assets/splash.png",
-                                "resizeMode":  "contain",
-                                "backgroundColor":  "#FAF7F2"
-                            },
-                 "assetBundlePatterns":  [
-                                             "**/*"
-                                         ],
-                 "plugins":  [
-                                 [
-                                     "expo-location",
-                                     {
-                                         "locationAlwaysAndWhenInUsePermission":  "Prefect uses your location to verify your attendance during scheduled sessions."
-                                     }
-                                 ]
-                             ],
-                 "ios":  {
-                             "supportsTablet":  true,
-                             "bundleIdentifier":  "com.prefect.app",
-                             "infoPlist":  {
-                                               "NSLocationWhenInUseUsageDescription":  "Prefect uses your location to verify your attendance during scheduled sessions."
-                                           }
-                         },
-                 "android":  {
-                                 "adaptiveIcon":  {
-                                                      "foregroundImage":  "./assets/adaptive-icon.png",
-                                                      "backgroundColor":  "#FAF7F2"
-                                                  },
-                                 "package":  "com.prefect.app",
-                                 "permissions":  [
-                                                     "ACCESS_FINE_LOCATION",
-                                                     "ACCESS_COARSE_LOCATION"
-                                                 ]
-                             },
-                 "web":  {
-                             "favicon":  "./assets/icon.png"
-                         },
-                 "extra":  {
-                               "apiUrl":  "https://prefect-jade.vercel.app"
-                           },
-                 "scheme":  "prefect"
-             }
+  "expo": {
+    "name": "Prefect",
+    "slug": "prefect",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF7F2"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Prefect uses your location to verify your attendance during scheduled sessions."
+        }
+      ],
+      "expo-router",
+      "expo-sharing"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.prefect.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Prefect uses your location to verify your attendance during scheduled sessions."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FAF7F2"
+      },
+      "package": "com.prefect.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "apiUrl": "https://prefect-jade.vercel.app",
+      "eas": {
+        "projectId": "3586aca5-ab36-4502-8c54-6fe618d38ec4"
+      }
+    },
+    "scheme": "prefect"
+  }
 }
